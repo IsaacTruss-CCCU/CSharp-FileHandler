@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Security.Permissions;
 
 namespace fileHanding
@@ -107,14 +108,17 @@ namespace fileHanding
         // Used for logging
         private Logging logger;
 
-        public FileInteractor(string logPath, string path, string mode, bool createIfNotFound = true)
+        // Ensures the file is a csv file
+        private bool csv = false;
+
+        public FileInteractor(string logPath, string path, string mode, bool csvFile, bool createIfNotFound = true)
         {
             logger = new Logging(logPath);
 
+            this.csv = csvFile;
             this.path = path;
             this.createIfNotFound = createIfNotFound;
             setup(mode);
-            
         }
 
         public bool exists()
@@ -306,6 +310,59 @@ namespace fileHanding
             logger.log($"{path} read at {DateTime.Now}");
 
             return lines.ToArray();
+        }
+
+        // Same as with normal read but it splits the lines at the comma and returns a 2D array
+        public string[,] readCSV()
+        {
+            if (setMode != "R")
+            {
+                setup("R");
+            }
+
+            List<List<string>> lines = new List<List<string>>();
+            sr.BaseStream.Seek(0, SeekOrigin.Begin);
+            string line = sr.ReadLine();
+
+            while (line != null)
+            {
+                List<string> row = new List<string>();
+
+                string[] split = line.Split(',');
+
+                for (int i = 0; i < split.Length; i++)
+                {
+                    row.Add(split[i]);
+                }
+
+                lines.Add(row);
+                line = sr.ReadLine();
+            }
+
+            close();
+
+            logger.log($"{path} read at {DateTime.Now}");
+
+            return convertTo2DArray(lines);
+        }
+
+        // Converts the 2D list to a 2D Array
+        private string[,] convertTo2DArray(List<List<string>> lines)
+        {
+            int rows = lines.Count;
+            int cols = lines[0].Count;
+
+            string[,] result = new string[rows, cols];
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    result[i, j] = lines[i][j];
+                }
+            }
+
+            return result;
         }
 
         public void close() // CLoses the file based off of the mode

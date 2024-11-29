@@ -17,6 +17,7 @@ Initializes a new instance of the `FileHandler` class.
 ### Parameters:
 - **`path`** (string): The file path to manage.
 - **`mode`** (string): The mode in which the file is to be handled.
+- **`logpath`** (string): The path to where the logs are saved.
 - **`createIfNotFound`** (bool): Whether to create the file if it doesn't exist. Defaults to `true`.
 
 ## Private Properties
@@ -56,6 +57,9 @@ Overwrites the file with the provided list of lines. Optionally allows toggling 
 #### `string[] read()`
 Reads the file and returns its content as an array of strings.
 
+#### `string[,] readCSV()`
+Reads the file and returns its content as a 2D array of strings, should it be a CSV file.
+
 ### 4. **File Management**
 #### `void createFile()`
 Creates the file if it doesn't exist.
@@ -68,6 +72,8 @@ Moves the file to a new location and updates the file path.
 
 #### `void copyFile(string newPath)`
 Creates a copy of the file at the specified location.
+
+
 
 ## Private Methods
 ### `void updateInfo()`

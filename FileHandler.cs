@@ -5,9 +5,6 @@ namespace fileHanding
 {
     public class FileHandler
     {
-
-        private string logPath = "";
-
         private string path;
         private string mode;
         private FileInteractor interactor;
@@ -17,13 +14,13 @@ namespace fileHanding
         private Dictionary<string, string> properties;
         private FileInfo fileInfo;
 
-        public FileHandler(string path, string mode, bool createIfNotFound = true)
+        public FileHandler(string path, string mode, string logpath, bool createIfNotFound = true)
         {
             this.path = path;
             this.mode = mode;
             this.createIfNotFound = createIfNotFound;
 
-            this.interactor = new FileInteractor(this.logPath, path, mode, createIfNotFound);
+            this.interactor = new FileInteractor(logpath, path, mode, createIfNotFound);
 
             this.fileInfo = new FileInfo(path);
 
@@ -100,6 +97,11 @@ namespace fileHanding
         public void write(List<string> lines, bool writeLines = true)
         {
             interactor.write(lines, writeLines);
+        }
+
+        public string[,] readCSV()
+        {
+            return interactor.readCSV();
         }
 
         public string[] read()
